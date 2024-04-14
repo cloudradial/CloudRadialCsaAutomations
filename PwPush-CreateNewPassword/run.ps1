@@ -2,30 +2,35 @@
 
 .SYNOPSIS
 
-        This function is used to create a new password and send it to the user using the PwPush API
+    This function is used to create a new password and send it to the user using the PwPush API
 
 .DESCRIPTION
 
-        This function is used to create a new password and send it to the user using the PwPush API.
+    This function is used to create a new password and send it to the user using the PwPush API.
 
-        It is a demonstration of using the PwPush API and can be adapted as needed.
+    It is a demonstration of using the PwPush API and can be adapted as needed.
 
-        The function requires the following environment variables to be set:
+    The function requires the following environment variables to be set:
 
-        PwPush_ApiEmail - Email address of the PwPush API user
-        PwPush_ApiKey - API Key
+    PwPush_ApiEmail - Email address of the PwPush API user
+    PwPush_ApiKey - API Key
+    SecurityKey - Optional, use this as an additional step to secure the function
 
 .INPUTS
 
     TicketId - optional - string value of the ticket id used for transaction tracking
+    SecurityKey - optional security key to secure the function
 
     JSON Structure
 
     {
-        "TicketId": "123456"
+        "TicketId": "123456",
+        "SecurityKey", "optional"
     }
 
 .OUTPUTS
+
+    JSON response with the following fields:
 
     Message - Descriptive string of result
     TicketId - TicketId passed in Parameters
@@ -107,6 +112,13 @@ function Generate-RandomPassword {
 }
 
 $TicketId = $Request.Body.TicketId
+$SecurityKey = $env:SecurityKey
+
+if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {
+    Write-Host "Invalid security key"
+    break;
+}
+
 if (-Not $TicketId) {
     $TicketId = ""
 }

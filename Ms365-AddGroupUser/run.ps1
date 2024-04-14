@@ -24,6 +24,7 @@
     GroupName - group name that exists in the tenant
     TenantId - string value of the tenant id, if blank uses the environment variable Ms365_TenantId
     TicketId - optional - string value of the ticket id used for transaction tracking
+    SecurityKey - Optional, use this as an additional step to secure the function
 
     JSON Structure
 
@@ -31,10 +32,13 @@
         "UserEmail": "email@address.com",
         "GroupName": "Group Name",
         "TenantId": "12345678-1234-1234-123456789012",
-        "TicketId": "123456
+        "TicketId": "123456,
+        "SecurityKey", "optional"
     }
 
 .OUTPUTS 
+
+    JSON response with the following fields:
 
     Message - Descriptive string of result
     TicketId - TicketId passed in Parameters
@@ -56,6 +60,12 @@ $UserEmail = $Request.Body.UserEmail
 $GroupName = $Request.Body.GroupName
 $TenantId = $Request.Body.TenantId
 $TicketId = $Request.Body.TicketId
+$SecurityKey = $env:SecurityKey
+
+if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {
+    Write-Host "Invalid security key"
+    break;
+}
 
 if (-Not $userEmail) {
     $message = "UserEmail cannot be blank."

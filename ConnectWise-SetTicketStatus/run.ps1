@@ -2,36 +2,39 @@
 
 .SYNOPSIS
     
-        This function is used to set the status of a ConnectWise ticket based on the result code.
+    This function is used to set the status of a ConnectWise ticket based on the result code.
 
 .DESCRIPTION
                 
-        This function is used to set the status of a ConnectWise ticket based on the result code.
+    This function is used to set the status of a ConnectWise ticket based on the result code.
                 
-        The function requires the following environment variables to be set:
+    The function requires the following environment variables to be set:
                 
-        ConnectWisePsa_ApiBaseUrl - Base URL of the ConnectWise API
-        ConnectWisePsa_ApiCompanyId - Company Id of the ConnectWise API
-        ConnectWisePsa_ApiPublicKey - Public Key of the ConnectWise API
-        ConnectWisePsa_ApiPrivateKey - Private Key of the ConnectWise API
-        ConnectWisePsa_ApiClientId - Client Id of the ConnectWise API
-        ConnectWisePsa_ApiStatusClosed - Status to set when result code is 200
-        ConnectWisePsa_ApiStatusOpen - Status to set when result code is not 200
+    ConnectWisePsa_ApiBaseUrl - Base URL of the ConnectWise API
+    ConnectWisePsa_ApiCompanyId - Company Id of the ConnectWise API
+    ConnectWisePsa_ApiPublicKey - Public Key of the ConnectWise API
+    ConnectWisePsa_ApiPrivateKey - Private Key of the ConnectWise API
+    ConnectWisePsa_ApiClientId - Client Id of the ConnectWise API
+    ConnectWisePsa_ApiStatusClosed - Status to set when result code is 200
+    ConnectWisePsa_ApiStatusOpen - Status to set when result code is not 200
+    SecurityKey - Optional, use this as an additional step to secure the function
+        
+    The function requires the following modules to be installed:
                 
-        The function requires the following modules to be installed:
-                
-        None    
+    None    
 
 .INPUTS
 
     TicketId - string value of numeric ticket number
     ResultCode - numeric value of result code, 200 = success
+    SecurityKey - optional security key to secure the function
 
     JSON Structure
 
     {
         "TicketId": "123456"
-        "ResultCode": 200
+        "ResultCode": 200,
+        "SecurityKey", "optional"
     }
 
 .OUTPUTS
@@ -51,27 +54,51 @@ function Set-ConnectWiseTicketStatus {
         [string]$PrivateKey,
         [string]$ClientId,
         [string]$TicketId,
-        [string]$Status
+        [string]$StatusName
     )
 
     # Construct the API endpoint for adding a note
     $apiUrl = "$ConnectWiseUrl/v4_6_release/apis/3.0/service/tickets/$TicketId"
 
-    $statusPayload = @{
-        status = @{
-            name = $Status
-        }
-    } | ConvertTo-Json
-    
+    # ConnectWise API requires the status to be an ID value
+    # Each board has its own status values, so we need to get the ticket to find the right board,
+    #   and then get the status ID from the board based on the name of the status 
+
     # Set up the authentication headers
     $headers = @{
         "Authorization" = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${PublicKey}:${PrivateKey}"))
         "Content-Type" = "application/json"
-        "clientId" = $ClientId
+        "ClientId" = $ClientId
     }
+    
+    $ticket = Invoke-RestMethod -Uri $apiUrl -Method Get -Headers $headers
 
-    # Make the API request to add the note
-    $result = Invoke-RestMethod -Uri $apiUrl -Method Patch -Headers $headers -Body $statusPayload
+    Write-Host ($ticket | ConvertTo-Json)
+
+    $boardId = $ticket.board.id
+
+    # be sure to include pageSize to get all the statuses, by default it only returns 25
+    $boardUrl = "$ConnectWiseUrl/v4_6_release/apis/3.0/service/boards/$boardId/statuses?pageSize=100"
+
+    $statuses = Invoke-RestMethod -Uri $boardUrl -Method Get -Headers $headers
+    
+    $status = $Statuses | Where-Object { $_.name -eq $StatusName }
+
+    Write-Host ($status | ConvertTo-Json)
+
+    $statusId = $status.id
+
+    # Construct the operation to update the status, must be in list form for the API
+    $operationList = @()
+    $operation = @{
+        op = "replace"
+        path = "status/id"
+        value = "$statusId"
+    }
+    $operationList += $operation
+    
+    # Make the API request to change the status, use the -InputOption option to keep PowerShell from flattening the list
+    $result = Invoke-RestMethod -Uri $apiUrl -Method Patch -Headers $headers -Body (ConvertTo-Json -InputObject $operationList)
     Write-Host $result
     return $result
 }
@@ -79,6 +106,12 @@ function Set-ConnectWiseTicketStatus {
 $TicketId = $Request.Body.TicketId
 $StatusClosed = $env:ConnectWisePsa_ApiStatusClosed
 $StatusOpen = $env:ConnectWisePsa_ApiStatusOpen
+$SecurityKey = $env:SecurityKey
+
+if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {
+    Write-Host "Invalid security key"
+    break;
+}
 
 if (-Not $TicketId) {
     Write-Host "Missing ticket number"
@@ -110,12 +143,12 @@ $result = Set-ConnectWiseTicketStatus -ConnectWiseUrl $env:ConnectWisePsa_ApiBas
     -PrivateKey $env:ConnectWisePsa_ApiPrivateKey `
     -ClientId $env:ConnectWisePsa_ApiClientId `
     -TicketId $TicketId `
-    -Status = $Status
+    -StatusName $Status
 
 Write-Host $result.Message
 
 $body = @{
-    response = $result | ConvertTo-Json;
+    response = ($result | ConvertTo-Json);
 } 
 
 Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
