@@ -54,7 +54,7 @@ function Set-ConnectWiseTicketStatus {
         [string]$PrivateKey,
         [string]$ClientId,
         [string]$TicketId,
-        [string]$Status
+        [string]$StatusName
     )
 
     # Construct the API endpoint for adding a note
@@ -75,13 +75,17 @@ function Set-ConnectWiseTicketStatus {
 
     Write-Host ($ticket | ConvertTo-Json)
 
-    $boardUrl = "$ConnectWiseUrl/v4_6_release/apis/3.0/service/boards/${ticket.board.id}/statuses?pageSize=100"
+    #boardId = $ticket.board.id
 
-    Write-Host $boardUrl
+    $boardUrl = "$ConnectWiseUrl/v4_6_release/apis/3.0/service/boards/$boardId/statuses?pageSize=100"
 
     $statuses = Invoke-RestMethod -Uri $boardUrl -Method Get -Headers $headers
     
     $status = $Statuses | Where-Object { $_.name -eq $StatusName }
+
+    Write-Host ($status | ConvertTo-Json)
+
+    $statusId = $status.id
 
     $operationList = @()
     $operation = @{
@@ -137,7 +141,7 @@ $result = Set-ConnectWiseTicketStatus -ConnectWiseUrl $env:ConnectWisePsa_ApiBas
     -PrivateKey $env:ConnectWisePsa_ApiPrivateKey `
     -ClientId $env:ConnectWisePsa_ApiClientId `
     -TicketId $TicketId `
-    -Status = $Status
+    -StatusName $Status
 
 Write-Host $result.Message
 
