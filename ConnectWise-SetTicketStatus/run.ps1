@@ -98,7 +98,7 @@ function Set-ConnectWiseTicketStatus {
     $operationList += $operation
     
     # Make the API request to change the status, use the -InputOption option to keep PowerShell from flattening the list
-    $result = Invoke-RestMethod -Uri $apiUrl -Method Patch -Headers $headers -Body -Body (ConvertTo-Json -InputObject $operationList)
+    $result = Invoke-RestMethod -Uri $apiUrl -Method Patch -Headers $headers -Body (ConvertTo-Json -InputObject $operationList)
     Write-Host $result
     return $result
 }
