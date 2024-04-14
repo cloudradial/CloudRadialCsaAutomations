@@ -75,8 +75,9 @@ function Set-ConnectWiseTicketStatus {
 
     Write-Host ($ticket | ConvertTo-Json)
 
-    #boardId = $ticket.board.id
+    $boardId = $ticket.board.id
 
+    # be sure to include pageSize to get all the statuses, by default it only returns 25
     $boardUrl = "$ConnectWiseUrl/v4_6_release/apis/3.0/service/boards/$boardId/statuses?pageSize=100"
 
     $statuses = Invoke-RestMethod -Uri $boardUrl -Method Get -Headers $headers
@@ -87,6 +88,7 @@ function Set-ConnectWiseTicketStatus {
 
     $statusId = $status.id
 
+    # Construct the operation to update the status, must be in list form for the API
     $operationList = @()
     $operation = @{
         op = "replace"
@@ -95,7 +97,7 @@ function Set-ConnectWiseTicketStatus {
     }
     $operationList += $operation
     
-    # Make the API request to add the note
+    # Make the API request to change the status, use the -InputOption option to keep PowerShell from flattening the list
     $result = Invoke-RestMethod -Uri $apiUrl -Method Patch -Headers $headers -Body -Body (ConvertTo-Json -InputObject $operationList)
     Write-Host $result
     return $result
