@@ -2,36 +2,39 @@
 
 .SYNOPSIS
     
-        This function is used to add a note to a ConnectWise ticket.
+    This function is used to add a note to a ConnectWise ticket.
 
 .DESCRIPTION
                     
-            This function is used to add a note to a ConnectWise ticket.
+    This function is used to add a note to a ConnectWise ticket.
                     
-            The function requires the following environment variables to be set:
+    The function requires the following environment variables to be set:
                     
-            ConnectWisePsa_ApiBaseUrl - Base URL of the ConnectWise API
-            ConnectWisePsa_ApiCompanyId - Company Id of the ConnectWise API
-            ConnectWisePsa_ApiPublicKey - Public Key of the ConnectWise API
-            ConnectWisePsa_ApiPrivateKey - Private Key of the ConnectWise API
-            ConnectWisePsa_ApiClientId - Client Id of the ConnectWise API
+    ConnectWisePsa_ApiBaseUrl - Base URL of the ConnectWise API
+    ConnectWisePsa_ApiCompanyId - Company Id of the ConnectWise API
+    ConnectWisePsa_ApiPublicKey - Public Key of the ConnectWise API
+    ConnectWisePsa_ApiPrivateKey - Private Key of the ConnectWise API
+    ConnectWisePsa_ApiClientId - Client Id of the ConnectWise API
+    SecurityKey - Optional, use this as an additional step to secure the function
                     
-            The function requires the following modules to be installed:
-                    
-            None        
+    The function requires the following modules to be installed:
+                   
+    None        
 
 .INPUTS
 
     TicketId - string value of numeric ticket number
     Message - text of note to add
     Internal - boolean indicating whether not should be internal only
+    SecurityKey - optional security key to secure the function
 
     JSON Structure
 
     {
         "TicketId": "123456",
         "Message": "This is a note",
-        "Internal": true
+        "Internal": true,
+        "SecurityKey", "optional"
     }
 
 .OUTPUTS
@@ -84,6 +87,12 @@ function Add-ConnectWiseTicketNote {
 $TicketId = $Request.Body.TicketId
 $Text = $Request.Body.Message
 $Internal = $Request.Body.Internal
+$SecurityKey = $env:SecurityKey
+
+if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {
+    Write-Host "Invalid security key"
+    break;
+}
 
 if (-Not $TicketId) {
     Write-Host "Missing ticket number"
@@ -112,7 +121,7 @@ $result = Add-ConnectWiseTicketNote -ConnectWiseUrl $env:ConnectWisePsa_ApiBaseU
 Write-Host $result.Message
 
 $body = @{
-    response = $result | ConvertTo-Json;
+    response = ($result | ConvertTo-Json);
 } 
 
 Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{

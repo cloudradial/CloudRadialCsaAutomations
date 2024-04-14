@@ -2,18 +2,19 @@
 
 .SYNOPSIS
     
-    This function is used to add a user to a group in Microsoft 365.
+    This function is to create a new group in Microsoft 365.
 
 .DESCRIPTION
     
-    This function is used to add a user to a group in Microsoft 365.
+    This function is to create a new group in Microsoft 365.
     
     The function requires the following environment variables to be set:
     
     Ms365_AuthAppId - Application Id of the service principal
     Ms365_AuthSecretId - Secret Id of the service principal
     Ms365_TenantId - Tenant Id of the Microsoft 365 tenant
-    
+    SecurityKey - Optional, use this as an additional step to secure the function
+ 
     The function requires the following modules to be installed:
     
     Microsoft.Graph
@@ -24,6 +25,7 @@
     GroupDescription - group description
     TenantId - string value of the tenant id, if blank uses the environment variable Ms365_TenantId
     TicketId - optional - string value of the ticket id used for transaction tracking
+    SecurityKey - Optional, use this as an additional step to secure the function
 
     JSON Structure
 
@@ -31,10 +33,13 @@
         "GroupName": "Group Name",
         "GroupDescription": "Group Description",
         "TenantId": "12345678-1234-1234-123456789012",
-        "TicketId": "123456
+        "TicketId": "123456,
+        "SecurityKey", "optional"
     }
 
 .OUTPUTS
+
+    JSON response with the following fields:
 
     Message - Descriptive string of result
     TicketId - TicketId passed in Parameters
@@ -56,6 +61,12 @@ $GroupName = $Request.Body.GroupName
 $GroupDescription = $Request.Body.GroupDescription
 $TenantId = $Request.Body.TenantId
 $TicketId = $Request.Body.TicketId
+$SecurityKey = $env:SecurityKey
+
+if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {
+    Write-Host "Invalid security key"
+    break;
+}
 
 if (-Not $GroupName) {
     $message = "GroupName cannot be blank."

@@ -1,26 +1,45 @@
 <# 
 
-Ms365-CreateUserLikeUser
+.SYNOPSIS
+    
+    This function is used to add a note to a ConnectWise ticket.
 
-This function creates a new user in the tenant with the same licenses and group memberships as an existing user.
+.DESCRIPTION
 
-Parameters
+    This function creates a new user in the tenant with the same licenses and group memberships as an existing user.
+
+    The function requires the following environment variables to be set:
+
+    Ms365_AuthAppId - Application Id of the service principal
+    Ms365_AuthSecretId - Secret Id of the service principal
+    Ms365_TenantId - Tenant Id of the Microsoft 365 tenant
+    SecurityKey - Optional, use this as an additional step to secure the function
+
+    The function requires the following modules to be installed:
+    
+    Microsoft.Graph
+
+.INPUTS
 
     UserEmail - user email address that exists in the tenant
     GroupName - group name that exists in the tenant
     TenantId - string value of the tenant id, if blank uses the environment variable Ms365_TenantId
     TicketId - optional - string value of the ticket id used for transaction tracking
+    SecurityKey - Optional, use this as an additional step to secure the function
 
-JSON Structure
+    JSON Structure
 
     {
         "UserEmail": "email@address.com",
         "GroupName": "Group Name",
         "TenantId": "12345678-1234-1234-123456789012",
-        "TicketId": "123456
+        "TicketId": "123456,
+        "SecurityKey", "optional"
     }
 
-Return Results 
+.OUTPUTS
+
+    JSON response with the following fields:
 
     Message - Descriptive string of result
     TicketId - TicketId passed in Parameters
@@ -43,10 +62,14 @@ $ExistingUserEmail = $Request.Body.ExistingUserEmail
 $NewUserFirstName = $Request.Body.NewUserFirstName
 $NewUserLastName = $Request.Body.NewUserLastName
 $NewUserDisplayName = $Request.Body.NewUserDisplayName
-
-
 $TenantId = $Request.Body.TenantId
 $TicketId = $Request.Body.TicketId
+$SecurityKey = $env:SecurityKey
+
+if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {
+    Write-Host "Invalid security key"
+    break;
+}
 
 if (-Not $userEmail) {
     $message = "UserEmail cannot be blank."

@@ -15,26 +15,34 @@
     Ms365_TenantId - Tenant Id of the Azure AD application
     CloudRadialCsa_ApiPublicKey - Public Key of the CloudRadial API
     CloudRadialCsa_ApiPrivateKey - Private Key of the CloudRadial API
-    
+    SecurityKey - Optional, use this as an additional step to secure the function
+
     The function requires the following modules to be installed:
     
     Microsoft.Graph     
 
 .INPUTS
 
-    companyId - numeric company id
-    tenantId - string value of the tenant id, if blank uses the environment variable Ms365_TenantId
+    CompanyId - numeric company id
+    TenantId - string value of the tenant id, if blank uses the environment variable Ms365_TenantId
+    SecurityKey - Optional, use this as an additional step to secure the function
 
     JSON Structure
 
     {
-        "companyId": "12"
-        "tenantId": "12345678-1234-1234-1234-123456789012"
+        "CompanyId": "12"
+        "TenantId": "12345678-1234-1234-1234-123456789012",
+        "SecurityKey", "optional"
     }
 
 .OUTPUTS
 
-    A JSON result of the function
+    JSON response with the following fields:
+
+    Message - Descriptive string of result
+    TicketId - TicketId passed in Parameters
+    ResultCode - 200 for success, 500 for failure
+    ResultStatus - "Success" or "Failure"
 
 #>
 
@@ -74,12 +82,19 @@ function Set-CloudRadialToken {
     Write-Host "API response: $($response | ConvertTo-Json -Depth 4)"
 }
 
-$companyId = $Request.Body.companyId
-$tenantId = $Request.Body.tenantId
+$companyId = $Request.Body.CompanyId
+$tenantId = $Request.Body.TenantId
+$SecurityKey = $env:SecurityKey
+
+if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {
+    Write-Host "Invalid security key"
+    break;
+}
 
 if (-Not $companyId) {
     $companyId = 1
 }
+
 if (-Not $tenantId) {
     $tenantId = $env:Ms365_TenantId
 }
