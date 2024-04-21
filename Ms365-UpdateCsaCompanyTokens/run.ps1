@@ -59,14 +59,6 @@ function Set-CloudRadialToken {
         [string]$GroupList
     )
 
-    Write-Host $AppId
-
-    Write-host $SecretId
-
-    Write-Host $CompanyId
-
-    Write-Host $GroupList
-
     # Construct the basic authentication header
     $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${AppId}:${SecretId}"))
     $headers = @{
@@ -121,7 +113,7 @@ Connect-MgGraph -ClientSecretCredential $credential365 -TenantId $tenantId
 $groupList = Get-MgGroup -All
 
 # Extract group names
-$groupNames = $groupList | Select-Object -ExpandProperty DisplayName
+$groupNames = $groupList | Select-Object -ExpandProperty DisplayName | Sort-Object -Property DisplayName
 
 # Convert the array of group names to a comma-separated string
 $groupNamesString = $groupNames -join ","
@@ -133,7 +125,7 @@ Write-Host "Updated CompanyGroups for Company Id: $companyId."
 # Get the list of domains
 $domains = Get-MgDomain
 
-$domainNames = $domains | Select-Object -ExpandProperty Id
+$domainNames = $domains | Select-Object -ExpandProperty Id | Sort-Object -Property Id
 
 $domainNamesString = $domainNames -join ","
 
