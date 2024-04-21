@@ -68,7 +68,7 @@ function Set-CloudRadialToken {
     Write-Host $GroupList
 
     # Construct the basic authentication header
-    $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$AppId:$SecretId"))
+    $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${AppId}:${SecretId}"))
     $headers = @{
         "Authorization" = "Basic $base64AuthInfo"
         "Content-Type" = "application/json"
