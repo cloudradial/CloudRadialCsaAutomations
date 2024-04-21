@@ -124,7 +124,7 @@ $groupNames = $groupList | Select-Object -ExpandProperty DisplayName
 # Convert the array of group names to a comma-separated string
 $groupNamesString = $groupNames -join ","
 
-Set-CloudRadialToken -Token "CompanyGroups" -AppId $$env:CloudRadialCsa_ApiPublicKey -SecretId $env:CloudRadialCsa_ApiPrivateKey -CompanyId $companyId -GroupList $groupNamesString
+Set-CloudRadialToken -Token "CompanyGroups" -AppId $env:CloudRadialCsa_ApiPublicKey -SecretId $env:CloudRadialCsa_ApiPrivateKey -CompanyId $companyId -GroupList $groupNamesString
 
 Write-Host "Updated CompanyGroups for Company Id: $companyId."
 
