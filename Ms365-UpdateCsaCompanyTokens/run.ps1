@@ -114,7 +114,7 @@ $groupList = Get-MgGroup -All
 
 # Extract group names
 $groupNames = $groupList | Select-Object -ExpandProperty DisplayName 
-$groupNames = $groupNames | Sort-Object -Property DisplayName
+$groupNames = $groupNames | Sort-Object
 
 # Convert the array of group names to a comma-separated string
 $groupNamesString = $groupNames -join ","
@@ -127,7 +127,7 @@ Write-Host "Updated CompanyGroups for Company Id: $companyId."
 $domains = Get-MgDomain
 
 $domainNames = $domains | Select-Object -ExpandProperty Id 
-$domainNames = $domainNames | Sort-Object -Property Id
+$domainNames = $domainNames | Sort-Object
 
 $domainNamesString = $domainNames -join ","
 
