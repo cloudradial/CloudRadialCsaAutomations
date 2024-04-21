@@ -113,7 +113,8 @@ Connect-MgGraph -ClientSecretCredential $credential365 -TenantId $tenantId
 $groupList = Get-MgGroup -All
 
 # Extract group names
-$groupNames = $groupList | Select-Object -ExpandProperty DisplayName | Sort-Object -Property DisplayName
+$groupNames = $groupList | Select-Object -ExpandProperty DisplayName 
+$groupNames = $groupNames | Sort-Object -Property DisplayName
 
 # Convert the array of group names to a comma-separated string
 $groupNamesString = $groupNames -join ","
@@ -125,7 +126,8 @@ Write-Host "Updated CompanyGroups for Company Id: $companyId."
 # Get the list of domains
 $domains = Get-MgDomain
 
-$domainNames = $domains | Select-Object -ExpandProperty Id | Sort-Object -Property Id
+$domainNames = $domains | Select-Object -ExpandProperty Id 
+$domainNames = $domainNames | Sort-Object -Property Id
 
 $domainNamesString = $domainNames -join ","
 
