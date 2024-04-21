@@ -137,7 +137,7 @@ $domainNames = $domains | Select-Object -ExpandProperty Id
 
 $domainNamesString = $domainNames -join ","
 
-Set-CloudRadialToken -Token "CompanyDomains" -AppId $$env:CloudRadialCsa_ApiPublicKey -SecretId $env:CloudRadialCsa_ApiPrivateKey -CompanyId $companyId -GroupList $domainNamesString
+Set-CloudRadialToken -Token "CompanyDomains" -AppId ${env:CloudRadialCsa_ApiPublicKey} -SecretId ${env:CloudRadialCsa_ApiPrivateKey} -CompanyId $companyId -GroupList $domainNamesString
 
 Write-Host "Updated CompanyDomains for Company Id: $companyId."
 
