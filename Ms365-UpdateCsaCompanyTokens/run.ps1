@@ -150,4 +150,3 @@ Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         Body        = $body
         ContentType = "application/json"
     })
-
