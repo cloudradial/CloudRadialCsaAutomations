@@ -66,6 +66,8 @@ function Set-CloudRadialToken {
         "Content-Type" = "application/json"
     }
 
+write-host $base64AuthInfo
+
     $body = @{
         "companyId" = $CompanyId
         "token" = "$Token"
@@ -111,23 +113,25 @@ Connect-MgGraph -ClientSecretCredential $credential365 -TenantId $tenantId
 $groupList = Get-MgGroup -All
 
 # Extract group names
-$groupNames = $groupList | Select-Object -ExpandProperty DisplayName
+$groupNames = $groupList | Select-Object -ExpandProperty DisplayName 
+$groupNames = $groupNames | Sort-Object
 
 # Convert the array of group names to a comma-separated string
 $groupNamesString = $groupNames -join ","
 
-Set-CloudRadialToken -Token "CompanyGroups" -AppId $$env:CloudRadialCsa_ApiPublicKey -SecretId $env:CloudRadialCsa_ApiPrivateKey -CompanyId $companyId -GroupList $groupNamesString
+Set-CloudRadialToken -Token "CompanyGroups" -AppId ${env:CloudRadialCsa_ApiPublicKey} -SecretId ${env:CloudRadialCsa_ApiPrivateKey} -CompanyId $companyId -GroupList $groupNamesString
 
 Write-Host "Updated CompanyGroups for Company Id: $companyId."
 
 # Get the list of domains
 $domains = Get-MgDomain
 
-$domainNames = $domains | Select-Object -ExpandProperty Id
+$domainNames = $domains | Select-Object -ExpandProperty Id 
+$domainNames = $domainNames | Sort-Object
 
 $domainNamesString = $domainNames -join ","
 
-Set-CloudRadialToken -Token "CompanyDomains" -AppId $$env:CloudRadialCsa_ApiPublicKey -SecretId $env:CloudRadialCsa_ApiPrivateKey -CompanyId $companyId -GroupList $domainNamesString
+Set-CloudRadialToken -Token "CompanyDomains" -AppId ${env:CloudRadialCsa_ApiPublicKey} -SecretId ${env:CloudRadialCsa_ApiPrivateKey} -CompanyId $companyId -GroupList $domainNamesString
 
 Write-Host "Updated CompanyDomains for Company Id: $companyId."
 
@@ -146,4 +150,3 @@ Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         Body        = $body
         ContentType = "application/json"
     })
-
