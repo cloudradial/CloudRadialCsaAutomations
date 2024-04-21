@@ -74,6 +74,8 @@ function Set-CloudRadialToken {
         "Content-Type" = "application/json"
     }
 
+write-host $base64AuthInfo
+
     $body = @{
         "companyId" = $CompanyId
         "token" = "$Token"
