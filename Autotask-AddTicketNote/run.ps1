@@ -66,12 +66,15 @@ function Add-AutotaskTicketNote {
     write-host $Username
     write-host $Secret
     WRite-Host $SecureString
+    Write-Host $Title
+    Write-Host $Text
+    Write-Host $TicketId
 
     # Create headers dictionary
     $headers = @{
         "ApiIntegrationcode" = $IntegrationCode
         "UserName" = $Username
-        "Secret" = $SecureString
+        "Secret" = $Secret
         "Content-Type" = "application/json"
     }
     
