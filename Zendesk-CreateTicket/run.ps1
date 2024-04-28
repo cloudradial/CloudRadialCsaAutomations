@@ -135,10 +135,10 @@ $result = Add-ZendeskTicket -ApiUser $env:Zendesk_ApiUsername `
     -UserName $UserName `
     -UserEmail $UserEmail
 
-Write-Host $result.Message
+Write-Host $result
 
 $body = @{
-    response = ($result | ConvertTo-Json);
+    response = ($result | ConvertTo-Json -Depth 100);
 } 
 
 Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
