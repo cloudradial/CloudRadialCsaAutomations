@@ -76,7 +76,7 @@ function Add-ZendeskTicket {
                 email = $UserEmail
                 }
         }
-    } | ConvertTo-Json
+    } | ConvertTo-Json -Depth 10
 
     # Set the request headers
     $headers = @{
