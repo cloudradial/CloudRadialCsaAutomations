@@ -87,7 +87,11 @@ function Add-AutotaskTicketNote {
 
     Write-Host $Version
 
-    $AutotaskBaseURI = Invoke-RestMethod -Uri "https://webservices.autotask.net/atservicesrest/$Version/zoneInformation?user=$Username"
+    $Zoneurl = "https://webservices.autotask.net/atservicesrest/$Version/zoneInformation?user=$Username"
+
+    Write-Host $Zoneurl
+
+    $AutotaskBaseURI = Invoke-RestMethod -Uri $Zoneurl
 
     Write-Host $AutotaskBaseURI
 
