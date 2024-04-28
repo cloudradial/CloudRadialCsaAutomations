@@ -77,10 +77,36 @@ Using this repository, it should take less than an hour to get things set up and
 
 ## Developer Information ##
 
-More information about the Microsoft.Graph module can be found at:
+### PSA Development
+
+Autotask
+
+[https://autotask.net/help/DeveloperHelp/Content/APIs/REST/REST_API_Home.htm](https://autotask.net/help/DeveloperHelp/Content/APIs/REST/REST_API_Home.htm)
+
+BMS
+
+[https://helpdesk.kaseya.com/hc/en-gb/articles/4402689767697-BMS-API-V2-BMS-Rest-APIs](https://helpdesk.kaseya.com/hc/en-gb/articles/4402689767697-BMS-API-V2-BMS-Rest-APIs)
+
+ConnectWise (requires login)
+
+[https://developer.connectwise.com/Products/ConnectWise_PSA/REST](https://developer.connectwise.com/Products/ConnectWise_PSA/REST)
+
+Halo
+
+[https://haloitsm.com/apidoc/info](https://haloitsm.com/apidoc/info)
+
+Syncro
+
+[https://api-docs.syncromsp.com/](https://api-docs.syncromsp.com/)
+
+Zendesk
+
+[https://developer.zendesk.com/api-reference/](https://developer.zendesk.com/api-reference/)
+
+### Microsoft.Graph
 
 [https://learn.microsoft.com/en-us/powershell/microsoftgraph/?view=graph-powershell-1.0](https://learn.microsoft.com/en-us/powershell/microsoftgraph/?view=graph-powershell-1.0)
 
-More information about the CloudRadial API can be found at: 
+### CloudRadial API 
 
 [https://developers.cloudradial.com](https://developers.cloudradial.com)
