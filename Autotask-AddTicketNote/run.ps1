@@ -70,7 +70,7 @@ function Add-AutotaskTicketNote {
         "Content-Type" = "application/json"
     }
     
-    $VersionInfo = Invoke-RestMethod -Uri "http://webservices.autotask.net/atservicesrest/versioninformation"
+    $VersionInfo = Invoke-RestMethod -Uri "https://webservices.autotask.net/atservicesrest/versioninformation"
 
     Write-Host ($VersionInfo | ConvertTo-Json)
 
@@ -79,7 +79,7 @@ function Add-AutotaskTicketNote {
 
     Write-Host $Version
 
-    $AutotaskBaseURI = Invoke-RestMethod -Uri "http://webservices.autotask.net/atservicesrest/$Version/zoneInformation?user=$Username"
+    $AutotaskBaseURI = Invoke-RestMethod -Uri "https://webservices.autotask.net/atservicesrest/$Version/zoneInformation?user=$Username"
 
     Write-Host $AutotaskBaseURI
 
