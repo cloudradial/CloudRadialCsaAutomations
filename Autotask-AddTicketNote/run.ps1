@@ -62,6 +62,11 @@ function Add-AutotaskTicketNote {
     $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureSecret)
     $SecureString = [System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($BSTR)
     
+    write-host $IntegrationCode
+    write-host $Username
+    write-host $Secret
+    WRite-Host $SecureString
+
     # Create headers dictionary
     $headers = @{
         "ApiIntegrationcode" = $IntegrationCode
