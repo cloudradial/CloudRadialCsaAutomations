@@ -124,10 +124,6 @@ $StatusClosed = $env:AutotaskPsa_ApiStatusClosed
 $StatusOpen = $env:AutotaskPsa_ApiStatusOpen
 $SecurityKey = $env:SecurityKey
 
-Write-Host "TicketId: $TicketId"
-Write-Host "StatusOpen: $StatusOpen"
-Write-Host "StatusClosed: $StatusClosed"
-
 if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {
     Write-Host "Invalid security key"
     break;
