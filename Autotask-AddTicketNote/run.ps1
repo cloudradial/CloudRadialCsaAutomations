@@ -134,7 +134,7 @@ Write-Host "Title: $Title"
 Write-Host "Text: $Text"
 
 $result = Add-AutotaskTicketNote `
-    -Username "$env:AutotaskPsa_ApiUsername" `
+    -Username $env:AutotaskPsa_ApiUsername `
     -Secret $env:AutotaskPsa_ApiSecret `
     -IntegrationCode $env:AutotaskPsa_ApiIntegrationCode `
     -TicketId $TicketId `

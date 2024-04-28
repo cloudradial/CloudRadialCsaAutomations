@@ -159,7 +159,7 @@ Write-Host "StatusClosed: $StatusClosed"
 Write-Host "Status: $Status"
 
 $result = Set-AutotaskTicketStatus `
-    -Username "$env:AutotaskPsa_ApiUsername" `
+    -Username $env:AutotaskPsa_ApiUsername `
     -Secret $env:AutotaskPsa_ApiSecret `
     -IntegrationCode $env:AutotaskPsa_ApiIntegrationCode `
     -TicketId $TicketId `
