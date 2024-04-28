@@ -55,17 +55,11 @@ function Set-AutotaskTicketStatus {
         [string]$StatusName
     )
 
-    $SecureSecret = ConvertTo-SecureString $Secret -AsPlainText -Force
-
-    # Convert the securestring back to a normal string
-    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureSecret)
-    $SecureString = [System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($BSTR)
-    
     # Create headers dictionary
     $headers = @{
         "ApiIntegrationcode" = $IntegrationCode
         "UserName" = $Username
-        "Secret" = $SecureString
+        "Secret" = $Secret
         "Content-Type" = "application/json"
     }
     
@@ -78,8 +72,10 @@ function Set-AutotaskTicketStatus {
 
     Write-Host $Version
 
-    $AutotaskBaseURI = Invoke-RestMethod -Uri "https://webservices.autotask.net/atservicesrest/$Version/zoneInformation?user=$Username"
+    $Zoneurl = "https://webservices.autotask.net/atservicesrest/$Version/zoneInformation?user=$Username"
 
+    $AutotaskBaseURI = Invoke-RestMethod -Uri $Zoneurl
+    
     Write-Host $AutotaskBaseURI
 
     $AutotaskBaseUrl = $AutotaskBaseURI.url
@@ -124,8 +120,8 @@ function Set-AutotaskTicketStatus {
 }
 
 $TicketId = $Request.Body.TicketId
-$StatusClosed = $env:ConnectWisePsa_ApiStatusClosed
-$StatusOpen = $env:ConnectWisePsa_ApiStatusOpen
+$StatusClosed = $env:AutotaskPsa_ApiStatusClosed
+$StatusOpen = $env:AutotaskPsa_ApiStatusOpen
 $SecurityKey = $env:SecurityKey
 
 if ($SecurityKey -And $SecurityKey -ne $Request.Headers.SecurityKey) {

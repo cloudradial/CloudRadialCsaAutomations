@@ -56,20 +56,6 @@ function Add-AutotaskTicketNote {
         [string]$Text
     )
 
-    $SecureSecret = ConvertTo-SecureString $Secret -AsPlainText -Force
-
-    # Convert the securestring back to a normal string
-    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureSecret)
-    $SecureString = [System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($BSTR)
-    
-    write-host $IntegrationCode
-    write-host $Username
-    write-host $Secret
-    WRite-Host $SecureString
-    Write-Host $Title
-    Write-Host $Text
-    Write-Host $TicketId
-
     # Create headers dictionary
     $headers = @{
         "ApiIntegrationcode" = $IntegrationCode
@@ -88,8 +74,6 @@ function Add-AutotaskTicketNote {
     Write-Host $Version
 
     $Zoneurl = "https://webservices.autotask.net/atservicesrest/$Version/zoneInformation?user=$Username"
-
-    Write-Host $Zoneurl
 
     $AutotaskBaseURI = Invoke-RestMethod -Uri $Zoneurl
 
